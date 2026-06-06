@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메타PRO 분석 보고서 - 이수현</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1D3A;
+    --navy-deep: #071428;
+    --navy-light: #132D54;
+    --gold: #C9A84C;
+    --gold-light: #E8D08C;
+    --gold-pale: #F5ECD3;
+    --white: #FFFFFF;
+    --gray-50: #F8F9FA;
+    --gray-100: #F1F3F5;
+    --gray-200: #E9ECEF;
+    --gray-400: #ADB5BD;
+    --gray-600: #6C757D;
+    --gray-800: #343A40;
+    --red: #E63946;
+    --red-bg: #FFF0F1;
+    --blue: #2B6CB0;
+    --blue-bg: #EBF4FF;
+    --green: #2D8A56;
+    --green-bg: #EDFCF2;
+    --orange: #D97706;
+    --orange-bg: #FFFBEB;
+    --purple: #7C3AED;
+    --purple-bg: #F3EEFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.8;
+    font-size: 15px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--white);
+    box-shadow: 0 4px 40px rgba(0,0,0,0.08);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 60%, #0E2545 100%);
+    padding: 48px 48px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    border: 2px solid rgba(201,168,76,0.12);
+    border-radius: 50%;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: 40px;
+    width: 200px; height: 200px;
+    border: 1.5px solid rgba(201,168,76,0.08);
+    border-radius: 50%;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold-light);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .header h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .header h1 span {
+    color: var(--gold);
+  }
+  .header-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+
+  /* ── INFO GRID ── */
+  .info-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .info-item {
+    padding: 18px 20px;
+    border-right: 1px solid var(--gray-200);
+    text-align: center;
+  }
+  .info-item:last-child { border-right: none; }
+  .info-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gray-400);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .info-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  /* ── SCORE HERO ── */
+  .score-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .score-card {
+    padding: 28px 24px;
+    text-align: center;
+    border-right: 1px solid var(--gray-200);
+    position: relative;
+  }
+  .score-card:last-child { border-right: none; }
+  .score-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .score-card-value {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .score-card-unit {
+    font-size: 12px;
+    color: var(--gray-600);
+  }
+  .sc-raw .score-card-label { color: var(--gray-600); }
+  .sc-raw .score-card-value { color: var(--navy); }
+  .sc-p .score-card-label { color: var(--blue); }
+  .sc-p .score-card-value { color: var(--blue); }
+  .sc-a .score-card-label { color: var(--gold); background: linear-gradient(90deg, var(--gold), #B8942F); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .sc-a .score-card-value { color: var(--gold); }
+  .sc-a { background: linear-gradient(180deg, #FFFDF5 0%, var(--white) 100%); }
+
+  /* ── SECTIONS ── */
+  .content { padding: 0 48px 48px; }
+
+  .section {
+    margin-top: 40px;
+  }
+  .section-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 6px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  .section-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    display: inline;
+    vertical-align: middle;
+  }
+  .section-line {
+    height: 2px;
+    background: linear-gradient(90deg, var(--navy), var(--gold), transparent);
+    margin-top: 10px;
+    margin-bottom: 24px;
+    border-radius: 1px;
+  }
+
+  /* ── 5-STAGE BAR ── */
+  .meta-stages {
+    display: flex;
+    gap: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .stage {
+    flex: 1;
+    padding: 16px 8px;
+    text-align: center;
+    position: relative;
+  }
+  .stage-icon {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .stage-name {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .stage-count {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+  .stage-pct {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+  .stage-sub {
+    font-size: 9px;
+    margin-top: 4px;
+    opacity: 0.6;
+    line-height: 1.3;
+  }
+  .s-확 { background: #E8F5E9; color: #1B5E20; }
+  .s-찍 { background: #FFF3E0; color: #E65100; }
+  .s-시 { background: #E3F2FD; color: #0D47A1; }
+  .s-실 { background: #FCE4EC; color: #B71C1C; }
+  .s-모 { background: #F3E5F5; color: #4A148C; }
+
+  /* ── CALLOUT BOX ── */
+  .callout {
+    background: linear-gradient(135deg, #FAFBFF 0%, #F5F7FF 100%);
+    border-left: 4px solid var(--navy);
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin: 20px 0;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .callout-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .callout p { margin-bottom: 6px; }
+  .callout strong { color: var(--navy); }
+
+  .callout-gold {
+    background: linear-gradient(135deg, #FFFDF5 0%, #FFF9E6 100%);
+    border-left-color: var(--gold);
+  }
+  .callout-gold .callout-title { color: #8B6914; }
+  .callout-gold strong { color: #8B6914; }
+
+  /* ── AREA CARDS ── */
+  .area-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .area-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .area-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+  }
+  .area-body {
+    padding: 0 20px 18px;
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .area-body ul {
+    list-style: none;
+    padding: 0;
+  }
+  .area-body li {
+    padding-left: 18px;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  .area-body li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--gray-400);
+    font-size: 12px;
+  }
+  .ah-reading { background: var(--purple-bg); color: var(--purple); border-bottom: 1px solid #E8DEFF; }
+  .ah-reading .area-tag { background: var(--purple); color: var(--white); }
+  .ah-literature { background: var(--blue-bg); color: var(--blue); border-bottom: 1px solid #D0E3FF; }
+  .ah-literature .area-tag { background: var(--blue); color: var(--white); }
+  .ah-hwajak { background: var(--orange-bg); color: #92400E; border-bottom: 1px solid #FDE68A; }
+  .ah-hwajak .area-tag { background: var(--orange); color: var(--white); }
+
+  .err-badges {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .err-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .eb-mo { background: #F3E5F5; color: #6A1B9A; }
+  .eb-sil { background: #FCE4EC; color: #C62828; }
+
+  /* ── SOLUTION CARDS ── */
+  .sol-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .sol-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+  .sol-1::before { background: linear-gradient(180deg, var(--purple), #A78BFA); }
+  .sol-2::before { background: linear-gradient(180deg, var(--red), #F87171); }
+  .sol-3::before { background: linear-gradient(180deg, var(--blue), #60A5FA); }
+  .sol-num {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .sol-1 .sol-num { color: var(--purple); }
+  .sol-2 .sol-num { color: var(--red); }
+  .sol-3 .sol-num { color: var(--blue); }
+  .sol-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .sol-body {
+    font-size: 14px;
+    line-height: 2;
+  }
+  .sol-body ol {
+    padding-left: 20px;
+    margin-top: 8px;
+  }
+  .sol-body li {
+    margin-bottom: 8px;
+  }
+
+  /* ── FINAL ── */
+  .final-box {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+    border-radius: 14px;
+    padding: 32px;
+    margin-top: 32px;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .final-box::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border: 1.5px solid rgba(201,168,76,0.12);
+    border-radius: 50%;
+  }
+  .final-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+  }
+  .final-box p {
+    font-size: 15px;
+    line-height: 2;
+    color: rgba(255,255,255,0.88);
+  }
+  .final-box strong {
+    color: var(--gold-light);
+  }
+  .final-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .final-hl {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.8);
+  }
+  .final-hl-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--gray-100);
+    padding: 20px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--gray-400);
+    border-top: 1px solid var(--gray-200);
+  }
+  .footer-logo {
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 13px;
+    letter-spacing: -0.3px;
+  }
+
+  @media print {
+    body { background: white; }
+    .page { box-shadow: none; max-width: 100%; }
+    .header { padding: 32px 36px 28px; }
+    .content { padding: 0 36px 36px; }
+    .final-box { break-inside: avoid; }
+    .sol-card { break-inside: avoid; }
+    .area-card { break-inside: avoid; }
+  }
+  @media (max-width: 640px) {
+    .header { padding: 32px 24px 28px; }
+    .info-bar { grid-template-columns: repeat(2, 1fr); }
+    .info-item:nth-child(2) { border-right: none; }
+    .score-hero { grid-template-columns: 1fr; }
+    .score-card { border-right: none; border-bottom: 1px solid var(--gray-200); }
+    .content { padding: 0 24px 36px; }
+    .meta-stages { flex-direction: column; }
+    .final-highlights { grid-template-columns: 1fr; }
+    .footer { padding: 16px 24px; flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">◆ META PRO ANALYSIS REPORT</div>
+    <h1>수능문제 <span>메타인지</span> 분석 보고서</h1>
+    <div class="header-sub">6월 모의평가 · 국어영역 · 화법과 작문</div>
+  </div>
+
+  <!-- INFO BAR -->
+  <div class="info-bar">
+    <div class="info-item">
+      <div class="info-label">이름</div>
+      <div class="info-value">이수현</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">학년</div>
+      <div class="info-value">N수</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">선택과목</div>
+      <div class="info-value">화법과 작문</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">목표</div>
+      <div class="info-value">서울대</div>
+    </div>
+  </div>
+
+  <!-- SCORE HERO -->
+  <div class="score-hero">
+    <div class="score-card sc-raw">
+      <div class="score-card-label">원점수</div>
+      <div class="score-card-value">78</div>
+      <div class="score-card-unit">45문항 중 36문항 정답</div>
+    </div>
+    <div class="score-card sc-p">
+      <div class="score-card-label">P점수 (진짜 실력)</div>
+      <div class="score-card-value">78</div>
+      <div class="score-card-unit">'찍' 문항 0 → 전체가 확실한 실력</div>
+    </div>
+    <div class="score-card sc-a">
+      <div class="score-card-label">메타 A점수 (보완 시)</div>
+      <div class="score-card-value">≈83</div>
+      <div class="score-card-unit">P점수 + '실' 손실의 50% 회수</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- SECTION 1 -->
+    <div class="section">
+      <span class="section-num">1</span>
+      <span class="section-title">메타인지 5단계 심층 분석 (확·찍·시·실·모)</span>
+      <div class="section-line"></div>
+
+      <p style="font-size:14px; color:var(--gray-600); margin-bottom:18px; line-height:1.8;">
+        메타인지 분석을 통해 수험생이 '아는 것과 모르는 것', 그리고 '실수하는 패턴'을 정확히 구분하여 실전 리스크를 진단합니다. 이수현 학생의 45문항을 5단계로 분류한 결과입니다.
+      </p>
+
+      <div class="meta-stages">
+        <div class="stage s-확">
+          <div class="stage-icon">✅</div>
+          <div class="stage-name">확</div>
+          <div class="stage-count">36</div>
+          <div class="stage-pct">80.0%</div>
+          <div class="stage-sub">확실히 아는 문제</div>
+        </div>
+        <div class="stage s-찍">
+          <div class="stage-icon">🎲</div>
+          <div class="stage-name">찍</div>
+          <div class="stage-count">0</div>
+          <div class="stage-pct">0%</div>
+          <div class="stage-sub">찍어서 맞춘 문제</div>
+        </div>
+        <div class="stage s-시">
+          <div class="stage-icon">⏱</div>
+          <div class="stage-name">시</div>
+          <div class="stage-count">0</div>
+          <div class="stage-pct">0%</div>
+          <div class="stage-sub">시간 부족 문제</div>
+        </div>
+        <div class="stage s-실">
+          <div class="stage-icon">⚠️</div>
+          <div class="stage-name">실</div>
+          <div class="stage-count">4</div>
+          <div class="stage-pct">8.9%</div>
+          <div class="stage-sub">단순 실수 문제</div>
+        </div>
+        <div class="stage s-모">
+          <div class="stage-icon">❌</div>
+          <div class="stage-name">모</div>
+          <div class="stage-count">5</div>
+          <div class="stage-pct">11.1%</div>
+          <div class="stage-sub">아예 모르는 문제</div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">💡 메타인지 점수 지표 분석</div>
+        <p><strong>원점수 78점</strong> — 표면적 점수</p>
+        <p><strong>P점수 78점 (진짜 내 실력)</strong> — '찍' 문항이 없으므로 취득한 원점수 전체가 확실한 본인의 실력</p>
+        <p><strong>메타 A점수 약 83점 (스킬 영역 보완 시)</strong> — P점수 78점 + '실'로 잃은 10점의 50%를 더한 점수</p>
+      </div>
+
+      <div class="callout callout-gold">
+        <div class="callout-title">📋 분석 결과</div>
+        <p>이수현 학생은 '찍'이나 '시(시간 부족)' 문항이 전혀 없어 시간 배분과 기본기 측면에서는 매우 안정적입니다. 하지만 1등급(목표 대학)으로 도약하기 위해서는 <strong>독서/문학에서의 고난도 추론 약점(모)</strong>과 <strong>문학/화작에서의 정보 처리 판단 오류(실)</strong>라는 두 가지 뚜렷한 장애물을 반드시 극복해야 합니다.</p>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section">
+      <span class="section-num">2</span>
+      <span class="section-title">영역별 약점 분석 및 취약 SIGNAL</span>
+      <div class="section-line"></div>
+
+      <p style="font-size:14px; color:var(--gray-600); margin-bottom:18px; line-height:1.8;">
+        학생이 직접 체크한 심층 분석 시그널을 바탕으로 영역별 오답 원인을 정밀 진단합니다.
+      </p>
+
+      <!-- 독서 -->
+      <div class="area-card">
+        <div class="area-header ah-reading">
+          <span class="area-tag">독서</span>
+          1~17번 · 고난도 정보 처리 및 &lt;보기&gt; 추론 능력 부재
+        </div>
+        <div class="area-body">
+          <div class="err-badges">
+            <span class="err-badge eb-mo">모(3) — 12, 15, 16번 연속 오답</span>
+          </div>
+          <p>틀린 3문항이 모두 '모(아예 모름)'에 집중되어 있습니다. 학생 스스로 진단했듯 <strong>'정보량 과다 시 세부 정보 파악 및 지문-선지 매칭 실패'</strong>와 <strong>'&lt;보기&gt; 사례에 지문 원리 적용 및 심화 추론 실패'</strong>가 핵심 원인입니다. 지문의 정보가 복잡해지면 거시적 흐름을 놓치고, 원리를 새로운 상황(&lt;보기&gt;)에 적용하는 응용력이 부족합니다.</p>
+        </div>
+      </div>
+
+      <!-- 문학 -->
+      <div class="area-card">
+        <div class="area-header ah-literature">
+          <span class="area-tag">문학</span>
+          18~34번 · 세부 내용 파악 부족 및 감상 기준의 흔들림
+        </div>
+        <div class="area-body">
+          <div class="err-badges">
+            <span class="err-badge eb-sil">실(2) — 22, 30번</span>
+            <span class="err-badge eb-mo">모(2) — 33, 34번</span>
+          </div>
+          <p>학생의 체크 시그널에 따르면 <strong>'작품의 세부 내용 파악 및 사실 관계 매칭 실패'</strong>와 <strong>'&lt;보기&gt;의 외적 준거를 활용한 작품의 종합적 감상 실패'</strong>가 나타납니다. 문학에서 '실(단순 실수)'과 '모(아예 모름)'가 혼재되어 있다는 것은, 감으로 문제를 풀다 보니 선지의 미세한 사실 관계를 놓치거나 객관적인 해석 기준(&lt;보기&gt;)을 제대로 적용하지 못하고 있음을 의미합니다.</p>
+        </div>
+      </div>
+
+      <!-- 화법과 작문 -->
+      <div class="area-card">
+        <div class="area-header ah-hwajak">
+          <span class="area-tag">화작</span>
+          35~45번 · 정보 처리 과정에서의 '판단 오류'
+        </div>
+        <div class="area-body">
+          <div class="err-badges">
+            <span class="err-badge eb-sil">실(2) — 40, 45번</span>
+          </div>
+          <p>개념이나 담화 상황을 모르는 것(모)이 아니라, 학생이 직접 체크한 대로 <strong>'정보 처리(판단 오류)'</strong>로 인한 '실수'가 2문항(6점)이나 발생했습니다. 지문과 선지의 정보를 1:1로 대응시키는 과정에서 주체와 객체를 헷갈리거나 조건의 적절성을 반대로 판단하는 인지적 오류가 실점의 원인입니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section">
+      <span class="section-num">3</span>
+      <span class="section-title">목표 달성(서울대)을 위한 전문가 코칭 솔루션</span>
+      <div class="section-line"></div>
+
+      <p style="font-size:14px; color:var(--gray-600); margin-bottom:20px; line-height:1.8;">
+        현재 이수현 학생은 70점대 후반에 정체되어 있으나, '실수(실)' 4문항을 통제하고 독서의 고난도 '모' 문항 접근법을 교정한다면 단기간에 90점대 진입이 가능합니다.
+      </p>
+
+      <!-- 솔루션 1 -->
+      <div class="sol-card sol-1">
+        <div class="sol-num">📝 솔루션 1</div>
+        <div class="sol-title">[독서] 정보량 과다 지문의 '구조화' 및 &lt;보기&gt; 매칭 훈련</div>
+        <div class="sol-body">
+          <p>독서에서 '모'로 틀린 문항들은 정보에 압도당했기 때문입니다.</p>
+          <ol>
+            <li>지문을 읽을 때 정보가 쏟아지면 눈으로만 읽지 말고, <strong>핵심 개념 간의 관계(비례/반비례, 대조, 인과)를 여백에 기호(↑, ↓, ↔)로 도식화하는 훈련</strong>을 하십시오.</li>
+            <li>&lt;보기&gt; 문제를 풀 때는 선지를 바로 보지 말고, &lt;보기&gt;의 사례가 지문의 어떤 원리(개념)와 1:1로 대응되는지 먼저 기준을 메모한 뒤 선지를 판단해야 함정에 빠지지 않습니다.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- 솔루션 2 -->
+      <div class="sol-card sol-2">
+        <div class="sol-num">📝 솔루션 2</div>
+        <div class="sol-title">[문학/화작] '정보 처리 판단 오류(실)' 원천 차단 시각화 루틴</div>
+        <div class="sol-body">
+          <p>문학과 화법과 작문에서 무려 4문제(10점)가 판단 오류 실수로 날아갔습니다. 이는 최상위권 진입을 가로막는 치명적 약점입니다.</p>
+          <ol>
+            <li>선지를 판단할 때 뭉뚱그려 읽지 말고, <strong>'주체 / 상황 / 정서 및 태도(문학)'</strong> 또는 <strong>'발화자 / 발화 내용 / 의도(화작)'</strong> 단위로 사선(/)을 그어 끊어 읽으십시오.</li>
+            <li>선지의 앞부분은 맞고 뒷부분은 틀리게 구성하는 평가원의 함정에 속지 않도록, 선지 내에서 틀린 단어 하나에 정확히 'X'를 치는 기계적인 손놀림을 습관화해야 합니다.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- 솔루션 3 -->
+      <div class="sol-card sol-3">
+        <div class="sol-num">📝 솔루션 3</div>
+        <div class="sol-title">&lt;보기&gt; 중심의 문학 객관적 독해 체화</div>
+        <div class="sol-body">
+          <p>문학에서 33, 34번을 '모'로 연속해서 틀린 것은 해석의 기준이 흔들렸기 때문입니다. 작품을 주관적인 감상으로 접근하는 습관을 버리고, <strong>반드시 문제에 딸린 &lt;보기&gt;를 먼저 읽어 시대적 배경, 작가의 의도 등 '외적 준거'의 틀을 잡은 후</strong> 지문을 독해하는 객관적 감상 훈련을 반복하십시오.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL -->
+    <div class="final-box">
+      <div class="final-label">💡 최종 처방</div>
+      <p>이수현 학생은 '시간 부족(시)'이나 요행(찍)이 없다는 점에서 매우 정직하고 탄탄한 학습 태도를 갖추고 있습니다. 남은 기간 동안 아래 두 가지에 집중한다면 충분히 최상위권의 목표를 달성할 수 있을 것입니다.</p>
+      <div class="final-highlights">
+        <div class="final-hl">
+          <div class="final-hl-num">핵심 과제 ①</div>
+          <strong>독서 &lt;보기&gt; 추론 논리 교정</strong><br>
+          정보 구조화 → 원리-사례 1:1 매칭
+        </div>
+        <div class="final-hl">
+          <div class="final-hl-num">핵심 과제 ②</div>
+          <strong>문학/화작 선지의 끊어 읽기</strong><br>
+          판단 오류(실수) 원천 차단
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-logo">이든관리형학습센터 · 메타PRO</div>
+    <div>미사강변대로 80 그린프라자 7층 ｜ 010-8442-2817</div>
+  </div>
+
+</div>
+
+</body>
+</html>
